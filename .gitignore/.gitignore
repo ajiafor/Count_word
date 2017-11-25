@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Nov 24 21:20:15 2017
+
+@author: AsFly
+"""
+
+import os,re,collections
+txtRex=re.compile(r'.txt$')
+txtFilename=[]
+for folder,subfolder,files in os.walk(r'E:\python\book'):
+    for filesearch in files:
+        mo=txtRex.search(filesearch)
+        if mo==None:
+            continue
+        txtFilename.append(folder+'\\'+filesearch)
+context=[]
+count=0
+wordcount={}
+'''************替换***********'''
+intab="+-*/=,:;.!?~@#$%^&|()[]{}<>\'\"\\0123456789"
+outab="                                        "
+table=str.maketrans(intab,outab)
+
+for filepath in txtFilename:
+    with open(filepath, mode='rb', encoding='utf-8',errors='ignore')as f:
+        context=(f.read()).lower()
+        context=context.translate(table)
+        lw=context.split()
+        for word in lw:
+            precount=wordcount.get(word,0)
+            wordcount[word]=precount+1
+'''***********save***********'''
+savefile=r'E:\python\book\word.csv'
+ff= open(savefile,mode='w', encoding='utf-8',errors='ignore')
+for k ,v in wordcount.items():
+    ff.write(str(k)+','+str(v)+'\n')
+ff.close()
